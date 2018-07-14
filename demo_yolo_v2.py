@@ -18,7 +18,7 @@ from collections import Counter
 import json
 
 pool = ThreadPool()
-os.environ["CUDA_VISIBLE_DEVICES"]='3'
+os.environ["CUDA_VISIBLE_DEVICES"]='1'
 
 class YOLO_detector(object):
     
@@ -33,11 +33,11 @@ class YOLO_detector(object):
         self.batch = 4
         
         self.graph = tf.Graph()
-        with tf.device('/gpu:1'):
+        with tf.device("/device:GPU:0"):
             with self.graph.as_default() as g:
                 self.build_from_pb()
-                gpu_options = tf.GPUOptions(allow_growth=True)
-                sess_config = tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False)
+                gpu_options = tf.GPUOptions(allow_growth=False)
+                sess_config = tf.ConfigProto(gpu_options=gpu_options, log_device_placement=True)
                 self.sess = tf.Session(config = sess_config)
                 self.sess.run(tf.global_variables_initializer())
         return
@@ -171,11 +171,11 @@ def demo_video():
     data_dir = "./test" 
     video_file = os.path.join(data_dir, video_name)
     
-    print(video_file)
+    #print(video_file)
     #vcap = cv2.VideoCapture(video_file)
-    vcap = cv2.VideoCapture(1)
-    vcap.set(3,1000.0) #  Resolution: Width
-    vcap.set(4,700.0) # Resolution: Height
+    vcap = cv2.VideoCapture(0)
+    vcap.set(3,300.0) #  Resolution: Width
+    vcap.set(4,300.0) # Resolution: Height
     vcap.set(5, 6) #webcam capture FPS 
     time.sleep(2)
     if False == vcap.isOpened():
@@ -200,21 +200,15 @@ def demo_video():
             cv2.putText(draw,"fps:{}".format(1/last),(1,18), 0, 1e-3*h, colors[results[i]['label']], thick//3)
             cv2.putText(draw,"{},{}".format(str(results[i]['category']), results[i]['score']),(int(w*results[i]['x1']),int(h*results[i]['y1'])-12), 0, 1e-3*h, colors[results[i]['label']], thick//3)
             cv2.rectangle(draw,(int(w*results[i]['x1']),int(h*results[i]['y1'])),(int(w*results[i]['x2']),int(h*results[i]['y2'])), colors[results[i]['label']], thick)
-            if results[i]['category'] == 'mouse':
-                print('mouse detected') 
+            if results[i]['category'] == 'person':
+                print('person detected') 
                 y1 = int(h*results[i]['y1'])
                 y2 = int(h*results[i]['y2'])
                 yh = y2 - y1
                 x1 = int(w*results[i]['x1'])
                 x2 = int(w*results[i]['x2'])
                 xh = x2 - x1
-                print(y1)
-                print(y2)
-                print(x1)
-                print(x2)
-                print(yh)
-                print(xh)
-                
+               
                 crop_img = draw[y1:y1+yh, x1:x1+xh]
                 cv2.imshow("cropped", crop_img)   
         cv2.imshow("result", draw)
