@@ -16,13 +16,21 @@ from multiprocessing.pool import ThreadPool
 from utils import tool 
 from collections import Counter
 import json
+from tensorflow.python.client import device_lib
+
 
 pool = ThreadPool()
-os.environ["CUDA_VISIBLE_DEVICES"]='1'
+#os.environ["CUDA_VISIBLE_DEVICES"]='2'
 
 class YOLO_detector(object):
     
     def __init__(self):
+
+        print(tf.__version__)
+        print(device_lib.list_local_devices())
+        tf.test.gpu_device_name()
+
+
         model_name = 'yolov2-coco'
         model_dir = './models'
         gpu_id = 4
@@ -36,8 +44,10 @@ class YOLO_detector(object):
         with tf.device("/device:GPU:0"):
             with self.graph.as_default() as g:
                 self.build_from_pb()
-                gpu_options = tf.GPUOptions(allow_growth=False)
-                sess_config = tf.ConfigProto(gpu_options=gpu_options, log_device_placement=True)
+                gpu_options = tf.GPUOptions(allow_growth=True)
+                sess_config = tf.ConfigProto(gpu_options=gpu_options, log_device_placement=True, allow_soft_placement=True)
+                sess_config.gpu_options.allocator_type = 'BFC'
+                sess_config.gpu_options.per_process_gpu_memory_fraction = 0.40
                 self.sess = tf.Session(config = sess_config)
                 self.sess.run(tf.global_variables_initializer())
         return
@@ -211,7 +221,7 @@ def demo_video():
                
                 crop_img = draw[y1:y1+yh, x1:x1+xh]
                 cv2.imshow("cropped", crop_img)   
-        cv2.imshow("result", draw)
+        #cv2.imshow("result", draw)
         #cv2.waitKey()
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
