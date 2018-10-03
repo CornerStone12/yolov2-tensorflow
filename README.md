@@ -17,9 +17,12 @@ Tensorflow implementation of [YOLO](https://pjreddie.com/darknet/yolo/).
 2. Download https://drive.google.com/file/d/13C6pdUkRW34J_zZWwhq_T4IPsBFdknP5/view?usp=sharing
    to yolov2_tensorflow/models/
 
+
 3.      ``` $ conda env create -f environment.yml ```
 
+
 4.      ``` $ conda activate yolo ```
+
 
 5.	``` $ python demo_yolo_v2.py ```
 
