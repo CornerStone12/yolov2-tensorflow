@@ -11,7 +11,7 @@ Tensorflow implementation of [YOLO](https://pjreddie.com/darknet/yolo/).
 1. Clone yolov2_tensorflow repository
 	```Shell
 	$ git clone https://github.com/CornerStone12/yolov2-tensorflow.git
-        $ cd yolov2_tensorflow
+    $ cd yolov2_tensorflow
 	```
 
 2. Download https://drive.google.com/file/d/13C6pdUkRW34J_zZWwhq_T4IPsBFdknP5/view?usp=sharing
