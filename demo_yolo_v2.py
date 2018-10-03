@@ -19,7 +19,7 @@ import json
 from tensorflow.python.client import device_lib
 
 
-pool = ThreadPool()
+#pool = ThreadPool()
 #os.environ["CUDA_VISIBLE_DEVICES"]='2'
 
 class YOLO_detector(object):
@@ -34,7 +34,7 @@ class YOLO_detector(object):
         model_name = 'yolov2-coco'
         model_dir = './models'
         gpu_id = 4
-        self.gpu_utility = 0.9
+        self.gpu_utility = 0.01
         
         self.pb_file = '{}/{}.pb'.format(model_dir, model_name)
         self.meta_file = '{}/{}.meta'.format(model_dir, model_name)
@@ -44,10 +44,10 @@ class YOLO_detector(object):
         with tf.device("/device:GPU:0"):
             with self.graph.as_default() as g:
                 self.build_from_pb()
-                gpu_options = tf.GPUOptions(allow_growth=True)
+                gpu_options = tf.GPUOptions()
                 sess_config = tf.ConfigProto(gpu_options=gpu_options, log_device_placement=True, allow_soft_placement=True)
                 sess_config.gpu_options.allocator_type = 'BFC'
-                sess_config.gpu_options.per_process_gpu_memory_fraction = 0.40
+                sess_config.gpu_options.per_process_gpu_memory_fraction = 0.10
                 self.sess = tf.Session(config = sess_config)
                 self.sess.run(tf.global_variables_initializer())
         return
@@ -146,7 +146,6 @@ class YOLO_detector(object):
         print("Forwarding the image input.")
         start = time.time()
         out = self.sess.run(self.out, feed_dict)
-        
         time_value = time.time()
         last = time_value - start
         print('Cost time of run = {}s.'.format(last))
@@ -171,8 +170,8 @@ def demo_image():
         for i in range(len(results)):
             cv2.putText(draw,str(results[i]['category']),(int(w*results[i]['x1']),int(h*results[i]['y1'])-12), 0, 1e-3*h, colors[results[i]['label']], thick//3)
             cv2.rectangle(draw,(int(w*results[i]['x1']),int(h*results[i]['y1'])),(int(w*results[i]['x2']),int(h*results[i]['y2'])), colors[results[i]['label']], thick)
-        cv2.imshow("result", draw)
-        cv2.waitKey()
+        #cv2.imshow("result", draw)
+        #cv2.waitKey()
 
 def demo_video():
     yolo = YOLO_detector()
@@ -220,11 +219,12 @@ def demo_video():
                 xh = x2 - x1
                
                 crop_img = draw[y1:y1+yh, x1:x1+xh]
-                cv2.imshow("cropped", crop_img)   
+                cv2.imwrite('img_out/img' + str(idx) + '.jpg',crop_img);
+                #cv2.imshow("cropped", crop_img)   
         #cv2.imshow("result", draw)
         #cv2.waitKey()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        #if cv2.waitKey(1) & 0xFF == ord('q'):
+        #    break
 
 
 if __name__ == '__main__':
