@@ -170,8 +170,8 @@ def demo_image():
         for i in range(len(results)):
             cv2.putText(draw,str(results[i]['category']),(int(w*results[i]['x1']),int(h*results[i]['y1'])-12), 0, 1e-3*h, colors[results[i]['label']], thick//3)
             cv2.rectangle(draw,(int(w*results[i]['x1']),int(h*results[i]['y1'])),(int(w*results[i]['x2']),int(h*results[i]['y2'])), colors[results[i]['label']], thick)
-        #cv2.imshow("result", draw)
-        #cv2.waitKey()
+        cv2.imshow("result", draw)
+        cv2.waitKey()
 
 def demo_video():
     yolo = YOLO_detector()
@@ -219,7 +219,7 @@ def demo_video():
                 xh = x2 - x1
                
                 crop_img = draw[y1:y1+yh, x1:x1+xh]
-                cv2.imwrite('img_out/img' + str(idx) + '.jpg',crop_img);
+                #cv2.imwrite('img_out/img' + str(idx) + '.jpg',crop_img);
                 #cv2.imshow("cropped", crop_img)   
         #cv2.imshow("result", draw)
         #cv2.waitKey()
