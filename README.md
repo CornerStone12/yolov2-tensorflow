@@ -1,10 +1,10 @@
 ## Yolo V2 Tensorflow-GPU
 
+Tensorflow implementation of [YOLO](https://pjreddie.com/darknet/yolo/).
+
 ### Requirements
 1. Anaconda
 2. Environment file is provided
-
-Tensorflow implementation of [YOLO](https://pjreddie.com/darknet/yolo/).
 
 ### Installation
 
